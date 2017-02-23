@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+          <head>
+        <meta charset="utf-8">
+            
+            <title>
+                管理多个SSH Key以支持多个Git账号 | 匆匆过客
+            </title>
+            <meta content="width=device-width, initial-scale=1" name="viewport">
+            <meta name="theme-color" content="#4184f3">
+            
+            
+            <link href="/favicon.ico" rel="icon"/>
+            
+
+            <link rel="stylesheet" href="/css/highlight.light.css">
+            <link rel="stylesheet" href="/css/prism-customize.css">
+            <link rel="stylesheet" href="/css/nav-icon.css">
+            <link rel="stylesheet" href="/css/waves.min.css">
+            <link rel="stylesheet" href="/css/jquery.tocify.css">
+            <link rel="stylesheet" href="/css/main.css">
+            <link rel="stylesheet" href="/css/nav-indicator.css">
+            
+  
+
+  
+            </meta>
+        </meta>
+    <link rel="stylesheet" href="/css/prism.css" type="text/css"></head>
+
+    <body>
+        <header>
+            <!-- cover image or sth. -->
+        </header>
+        <div id="main" class="m-scene">
+            
+<div class="nav-wrapper">
+
+    <div class="container">
+        <nav>
+            <div class="logo wave">
+                <a href="/" id="logo">
+                    匆匆过客
+                </a>
+            </div>
+            <div class="nav-toggle-icon" >
+                <div class="material-hamburger">
+                    <span>
+                    </span>
+                    <span>
+                    </span>
+                    <span>
+                    </span>
+                </div>
+            </div>
+            <div class="menu-wrapper">
+                <div class="nav-indicator">
+                </div>
+                <ul class="menus">
+                    
+                     
+                        <li>
+                            <a class="wave " href="/">
+                                Home
+                            </a>
+                        </li>
+                     
+                        <li>
+                            <a class="wave " href="/archives">
+                                Archive
+                            </a>
+                        </li>
+                     
+                        <li>
+                            <a class="wave " href="/about">
+                                About
+                            </a>
+                        </li>
+                     
+                        <li>
+                            <a class="wave no-smoothstate" href="/atom.xml">
+                                RSS
+                            </a>
+                        </li>
+                     
+                    
+                   
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+            <div class="container content">
+                <div class="scene_element scene_element--fadein">
+                    <div class="row">
+    <div class="main">
+        <article>
+          
+          <header class="post-header">
+          
+          </header>
+          <h1 class="post-title">管理多个SSH Key以支持多个Git账号</h1>
+
+          <section class="post-info">
+            <span class="post-date">2017/02/21</span>
+            
+            <span class="post-category">
+                <a class="article-category-link" href="/categories/Git/">Git</a>
+            </span>
+            
+            
+            <span class="post-tags">
+              <ul class="post-tag-list"><li class="post-tag-list-item"><a class="post-tag-list-link" href="/tags/Git/">Git</a></li></ul>
+            </span>
+            
+          </section>
+
+          <section class="post-content">
+            <h2 id="生成SSH密钥"><a href="/2017/02/21/2017022301/#生成SSH密钥" class="headerlink" title="生成SSH密钥"></a>生成SSH密钥</h2><ul>
+<li><p>生成默认公钥</p>
+<p>  先确认系统中是否已有默认的SSH密钥（使用的是公钥，之后都称公钥）存在。</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cat ~/.ssh/id_rsa.pub</div></pre></td></tr></table></figure>
+<p>如果已经有了则不用生成默认的公钥了，如果没有，则按照如下命令生成。生成后再用上述cat命令查看公钥。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh-keygen -t rsa -C &quot;$your_email&quot;</div></pre></td></tr></table></figure>
+<ul>
+<li>生成更多的公钥<br>按如下命令生成新的公钥，注意这次要天加输出文件的名字，以免覆盖默认公钥</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh-keygen -t rsa -C &apos;$another_email&apos; -f github</div></pre></td></tr></table></figure>
+<p>如需更多的SSH公钥按上述命令生成即可。==注意输出文件名字不要相同，无需加.pub后缀。==</p>
+<h2 id="同一个操作系统用不同的SSH公钥访问不同的Git平台"><a href="/2017/02/21/2017022301/#同一个操作系统用不同的SSH公钥访问不同的Git平台" class="headerlink" title="同一个操作系统用不同的SSH公钥访问不同的Git平台"></a>同一个操作系统用不同的SSH公钥访问不同的Git平台</h2><ul>
+<li>创建ssh配置文件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">touch ~/.ssh/config</div></pre></td></tr></table></figure>
+<ul>
+<li>添加ssh配置</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Host    github    # ssh别名，随意取                    </div><div class="line">    HostName        github.com              # 主机名</div><div class="line">    Port            22                      # SSH端口号</div><div class="line">    PreferredAuthentications publickey      # 认证类型</div><div class="line">    User            you_git_name                     # 用户</div><div class="line">    IdentityFile    ~/.ssh/github</div></pre></td></tr></table></figure>
+<p>将上述配置内容添加至 ~/.ssh/config 文件即可。注意按需修改配置内容，勿一成不变地复制。要添加更多的Git平台账户时继续在config文件中按上述格式追加配置即可。</p>
+<ul>
+<li>遇到的问题<br>当添加配置完成后通过如下命令验证是否可以用公钥访问：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh -T git@github.com   # 这里的github取自上述 config 文件中的 Host 值</div></pre></td></tr></table></figure>
+<ul>
+<li>配置文件权限错误</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd ~/.ssh/</div><div class="line">chmod 600 *</div></pre></td></tr></table></figure>
+<p>再执行ssh -T github 验证效果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ssh -T git@github.com   # 这里的github取自上述 config 文件中的 Host 值</div></pre></td></tr></table></figure>
+
+          </section>
+        </article>
+        
+
+       
+
+         <!-- comments -->
+        <div class="comment-section">
+  
+    
+
+
+</div>
+
+    </div>
+    
+</div>
+
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+  <p>
+    <strong>©&nbsp;&nbsp;<a href="http://caixin.me">匆匆过客</a></strong>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="http://www.miitbeian.gov.cn/" rel="external nofollow" target="_blank">浙ICP备15036709号</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <img src="http://olr4ct0jl.bkt.clouddn.com/gongan.png">
+    <a href="http://beian.gov.cn/">浙公网安备33010602002182号</a>
+  </p>
+</footer>
+<script src="/lib/jquery.js"></script>
+<script src="/lib/waves.js"></script>
+<script src="/lib/jquery-ui.js"></script>
+<script src="/lib/jquery.tocify.js"></script>
+<script src="/js/main.js"></script>
+
+    </body>
+</html>
